@@ -1,5 +1,7 @@
 package be.iesca.ebar.domaine;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -13,14 +15,16 @@ public class Commande implements Serializable {
     @Id
     @GeneratedValue
     private int id;
+    @CreationTimestamp
     private Calendar dateCreation;
-    @ElementCollection
-    @CollectionTable(name = "lignes_commande")
-    @Column(name = "quantite", nullable = false)
-    private Map<Biere, Integer> bieresCommandees = new HashMap<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private Map<Biere, LigneCommande> bieresCommandees = new HashMap<>();
 
     @ManyToOne(optional = false)
-    private User user = new User();
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    private EtatCommande etat;
 
     public Commande(){}
 
@@ -64,11 +68,21 @@ public class Commande implements Serializable {
         this.user = user;
     }
 
-    public Map<Biere, Integer> getBieresCommandees() {
+    public EtatCommande getEtat() {
+        return etat;
+    }
+
+    public void setEtat(EtatCommande etat) {
+        this.etat = etat;
+    }
+
+    public Map<Biere, LigneCommande> getBieresCommandees() {
         return bieresCommandees;
     }
 
-    public void setBieresCommandees(Map<Biere, Integer> bieresCommandees) {
+    public void setBieresCommandees(Map<Biere, LigneCommande> bieresCommandees) {
         this.bieresCommandees = bieresCommandees;
     }
+
+
 }

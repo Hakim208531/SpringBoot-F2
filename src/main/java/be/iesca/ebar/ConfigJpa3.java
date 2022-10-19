@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import be.iesca.ebar.domaine.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -14,15 +15,9 @@ import be.iesca.ebar.dao.BiereDao;
 import be.iesca.ebar.dao.CommandeDao;
 import be.iesca.ebar.dao.RoleDao;
 import be.iesca.ebar.dao.UserDao;
-import be.iesca.ebar.domaine.Adresse;
-import be.iesca.ebar.domaine.Biere;
-import be.iesca.ebar.domaine.CarteCredit;
-import be.iesca.ebar.domaine.Commande;
-import be.iesca.ebar.domaine.Role;
-import be.iesca.ebar.domaine.User;
 
 @Configuration
-public class ConfigJpa2 {
+public class ConfigJpa3 {
 
 	private User creerUserAvecMdpChiffre(String nom, String email, String password) {
 		String mdpChiffre = passwordEncoder().encode(password);
@@ -36,15 +31,15 @@ public class ConfigJpa2 {
 
 	@Bean
 	public List<Biere> initialiserLesBieres(BiereDao biereDao) {
-		ArrayList<Biere> bieres = new ArrayList<>(8);
-		bieres.add(new Biere("Chimay Rouge", "Trappiste", "brune", "Abbaye de Scourmont"));
-		bieres.add(new Biere("Floreffe Blonde", "Abbaye", "blonde", "Brasserie Lefèbvre"));
-		bieres.add(new Biere("Blanche de Hoegaarden", "Blanche", "blanche", "Brasserie De Kluis"));
-		bieres.add(new Biere("Chimay Bleue", "Trappiste", "brune", "Abbaye de Scourmont"));
-		bieres.add(new Biere("Floreffe Triple", "Abbaye", "blonde", "Brasserie Lefèbvre"));
-		bieres.add(new Biere("Blanche De Bruxelles", "Blanche", "blanche", "Brasserie Lefèbvre"));
-		bieres.add(new Biere("Bush Blonde", "Spécialité", "blonde", "Brasserie Dubuisson"));
-		bieres.add(new Biere("Bush", "Spécialité", "ambrée", "Brasserie Dubuisson"));
+		ArrayList<Biere> bieres = new ArrayList<Biere>(8);
+		bieres.add(new Biere("Chimay Rouge", "Trappiste", "brune", "Abbaye de Scourmont", 1.65));
+		bieres.add(new Biere("Floreffe Blonde", "Abbaye", "blonde", "Brasserie Lefèbvre", 1.56));
+		bieres.add(new Biere("Blanche de Hoegaarden", "Blanche", "blanche", "Brasserie De Kluis", 1.65));
+		bieres.add(new Biere("Chimay Bleue", "Trappiste", "brune", "Abbaye de Scourmont", 1.49));
+		bieres.add(new Biere("Floreffe Triple", "Abbaye", "blonde", "Brasserie Lefèbvre", 1.65));
+		bieres.add(new Biere("Blanche De Bruxelles", "Blanche", "blanche", "Brasserie Lefèbvre", 1.80));
+		bieres.add(new Biere("Bush Blonde", "Spécialité", "blonde", "Brasserie Dubuisson", 1.9));
+		bieres.add(new Biere("Bush", "Spécialité", "ambrée", "Brasserie Dubuisson", 1.74));
 
 		bieres.forEach(b -> {
 			b.setId(biereDao.save(b).getId());
@@ -105,26 +100,29 @@ public class ConfigJpa2 {
 
 	@Bean
 	List<Commande> initialiserLesCommandes(CommandeDao commandeDao, List<User> users, List<Biere> bieres) {
-		List<Commande> commandes = new ArrayList<>();
+		List<Commande> commandes = new ArrayList<Commande>();
 		// admin
 		Commande commande1Admin = new Commande(users.get(0));
-		Map<Biere, Integer> mapAdmin = new HashMap<Biere, Integer>();
-		mapAdmin.put(bieres.get(0), 10);
-		mapAdmin.put(bieres.get(1), 15);
+		Map<Biere, LigneCommande> mapAdmin = new HashMap<Biere, LigneCommande>();
+		mapAdmin.put(bieres.get(0), new LigneCommande(bieres.get(0), 10, 1.70));
+		mapAdmin.put(bieres.get(1), new LigneCommande(bieres.get(1), 15, 1.80));
+		commande1Admin.setEtat(EtatCommande.CREEE);
 		commande1Admin.setBieresCommandees(mapAdmin);
 		commande1Admin=commandeDao.save(commande1Admin);
 		commandes.add(commande1Admin);
 		// membre 1
 		Commande commande1Membre = new Commande(users.get(1));
-		Map<Biere, Integer> mapMembre1 = new HashMap<Biere, Integer>();
-		mapMembre1.put(bieres.get(2), 20);
+		Map<Biere, LigneCommande> mapMembre1 = new HashMap<Biere, LigneCommande>();
+		mapMembre1.put(bieres.get(2), new LigneCommande(bieres.get(2), 20, 1.65));
+		commande1Membre.setEtat(EtatCommande.CREEE);
 		commande1Membre.setBieresCommandees(mapMembre1);
 		commande1Membre=commandeDao.save(commande1Membre);
 		commandes.add(commande1Membre);
 		// membre 2
 		Commande commande2Membre = new Commande(users.get(1));
-		Map<Biere, Integer> mapMembre2 = new HashMap<Biere, Integer>();
-		mapMembre2.put(bieres.get(3), 25);
+		Map<Biere, LigneCommande> mapMembre2 = new HashMap<Biere, LigneCommande>();
+		mapMembre2.put(bieres.get(3), new LigneCommande(bieres.get(3), 25, 1.35));
+		commande2Membre.setEtat(EtatCommande.CREEE);
 		commande2Membre.setBieresCommandees(mapMembre2);
 		commandes.add(commande2Membre);
 		commande2Membre=commandeDao.save(commande2Membre);

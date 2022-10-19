@@ -19,15 +19,24 @@ public class Biere implements Serializable {
     @Column(nullable = false)
     private String brasserie;
 
+    private double prix;
+
     public Biere(){}
 
-    public Biere(String nom, String type, String couleur, String brasserie){
+    public Biere(String nom, String type, String couleur, String brasserie, double prix){
         this.nom = nom;
         this.type = type;
         this.couleur = couleur;
         this.brasserie = brasserie;
+        this.prix = prix;
     }
 
+    @Override
+    public String toString() {
+        return "Biere{" +
+                "prix=" + prix +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
